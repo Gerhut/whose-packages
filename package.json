@@ -1,0 +1,36 @@
+{
+  "name": "whose-packages",
+  "version": "0.1.0",
+  "description": "Display someone's packages' info on npm.",
+  "main": "index.js",
+  "scripts": {
+    "start": "node .",
+    "test": "standard",
+    "dev": "nodemon"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Gerhut/whose-packages.git"
+  },
+  "author": "George Chung <Gerhut@GMail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Gerhut/whose-packages/issues"
+  },
+  "homepage": "https://github.com/Gerhut/whose-packages#readme",
+  "engines": {
+    "node": "^7.6.0"
+  },
+  "dependencies": {
+    "cheerio": "^0.22.0",
+    "dotenv": "^4.0.0",
+    "got": "^6.7.1",
+    "koa": "^2.0.1",
+    "koa-route": "^3.2.0",
+    "pug": "^2.0.0-beta11"
+  },
+  "devDependencies": {
+    "nodemon": "^1.11.0",
+    "standard": "^8.6.0"
+  }
+}

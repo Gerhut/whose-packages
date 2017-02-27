@@ -1,0 +1,69 @@
+doctype html
+html(lang="en")
+  head
+    meta(charset="utf-8")
+    meta(name="viewport" content="width=device-width, initial-scale=1")
+    title=user
+    link(rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bulma/0.3.2/css/bulma.css")
+  body
+    header.hero.is-primary
+      .hero-body
+        .container
+          h1.title
+            a(href=`https://www.npmjs.com/~${user}` title=`View ${user} on npm`)=user
+            | 's packages
+    main.section
+      .container
+        table.table.is-bordered
+          thead
+            tr
+              th Package
+              th Daily Downloads
+              th Weekly Downloads
+              th Monthly Downloads
+          tfoot
+            tr
+              th Sum
+              th.daily
+              th.weekly
+              th.monthly
+          tbody
+            each pkg in pkgs
+              tr(data-package=pkg)
+                td: a(href=`https://www.npmjs.com/packages/${pkg}` title=`View ${pkg} on npm` target="_blank")=pkg
+                td.daily
+                td.weekly
+                td.monthly
+    footer.footer
+      .container
+        .content
+          | Built by 
+          a(href="http://koajs.com" title="View Koa's homepage")  Koa 2
+          | , 
+          a(href="http://pugjs.org" title="View Pug's homepage") Pug 2
+          | , 
+          a(href="http://bulma.io" title="View Bulma's homepage") Bulma
+          |  and 
+          a(href="http://jquery.com" title="View jQuery's homepage") jQuery 3
+    script(src="//code.jquery.com/jquery-3.1.1.js")
+    script.
+      $.when.apply($, $('tr[data-package]').map(function () {
+        var $this = $(this)
+        var pkg = $this.data('package')
+        return $.get('/package/' + pkg).then(function (response) {
+          $this.find('.daily').text(response.daily)
+          $this.find('.weekly').text(response.weekly)
+          $this.find('.monthly').text(response.monthly)
+          return response
+        })
+      })).then(function () {
+        var sum = { daily: 0, weekly: 0, monthly: 0 }
+        $.each(arguments, function () {
+          sum.daily += this.daily
+          sum.weekly += this.weekly
+          sum.monthly += this.monthly
+        })
+        $('tfoot .daily').text(sum.daily)
+        $('tfoot .weekly').text(sum.weekly)
+        $('tfoot .monthly').text(sum.monthly)
+      })
