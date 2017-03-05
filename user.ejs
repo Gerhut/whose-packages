@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title><%= user %></title>
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bulma/0.3.2/css/bulma.css">
+</head>
+<body>
+  <header class="hero is-primary">
+    <div class="hero-body">
+      <div class="container">
+        <h1 class="title">
+          <a href="https://www.npmjs.com/~<%= user %>" title="View <%= user %> on npm"><%= user %></a>
+          's packages
+        </h1>
+      </div>
+    </div>
+  </header>
+  <main class="section">
+    <div class="contianer">
+      <table class="table is-bordered">
+        <thead>
+          <tr>
+            <th>Package</th>
+            <th>Daily Downloads</th>
+            <th>Weekly Downloads</th>
+            <th>Monthly Downloads</th>
+          </tr>
+        </thead>
+        <tfoot>
+          <tr>
+            <th>Sum</th>
+            <th class="daily"></th>
+            <th class="weekly"></th>
+            <th class="monthly"></th>
+        </tfoot>
+        <tbody>
+          <% for (const pkg of pkgs) { %>
+            <tr data-package="<%= pkg %>">
+              <td><a href="https://www.npmjs.com/packages/<%= pkg %>" title="View <%= pkg %> on npm" target="_blank"><%= pkg %></a></td>
+              <td class="daily"></td>
+              <td class="weekly"></td>
+              <td class="monthly"></td>
+            </tr>
+          <% } %>
+        </tbody>
+      </table>
+    </div>
+  </main>
+  <footer class="footer">
+    <div class="container">
+      <div class="content">
+        Built by
+        <a href="http://koajs.com" title="View Koa's homepage">Koa 2</a>
+        ,
+        <a href="http://ejs.co" title="View ejs' homepage">ejs 2</a>
+        ,
+        <a href="http://bulma.io" title="View Bulma's homepage">Bulma</a>
+        and
+        <a href="http://jquery.com" title="View jQuery's homepage">jQuery</a>
+        .
+      </div>
+    </div>
+  </footer>
+  <script src="//code.jquery.com/jquery-3.1.1.js"></script>
+  <script>
+    void function () {
+      var sumDaily = 0
+      var sumWeekly = 0
+      var sumMonthly = 0
+      $.when.apply($, $('tr[data-package]').map(function () {
+        var $this = $(this)
+        var pkg = $this.data('package')
+        return $.when(
+          getDownloads(pkg, 'last-day').then(function (downloads) {
+            $this.find('.daily').text(downloads)
+            sumDaily += downloads
+          }),
+          getDownloads(pkg, 'last-week').then(function (downloads) {
+            $this.find('.weekly').text(downloads)
+            sumWeekly += downloads
+          }),
+          getDownloads(pkg, 'last-month').then(function (downloads) {
+            $this.find('.monthly').text(downloads)
+            sumMonthly += downloads
+          }),
+        )
+      })).then(function () {
+        $('tfoot .daily').text(sumDaily)
+        $('tfoot .weekly').text(sumWeekly)
+        $('tfoot .monthly').text(sumMonthly)
+      })
+      function getDownloads(pkg, period) {
+        return $.get('https://api.npmjs.org/downloads/point/' + period + '/' + pkg)
+          .then(function (response) {
+            return 'downloads' in response ? response.downloads : 0
+          })
+      }
+    } ()
+  </script>
+</body>
+</html>
