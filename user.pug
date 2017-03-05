@@ -47,23 +47,36 @@ html(lang="en")
           a(href="http://jquery.com" title="View jQuery's homepage") jQuery 3
     script(src="//code.jquery.com/jquery-3.1.1.js")
     script.
-      $.when.apply($, $('tr[data-package]').map(function () {
-        var $this = $(this)
-        var pkg = $this.data('package')
-        return $.get('/package/' + pkg).then(function (response) {
-          $this.find('.daily').text(response.daily)
-          $this.find('.weekly').text(response.weekly)
-          $this.find('.monthly').text(response.monthly)
-          return response
+      void function () {
+        var sumDaily = 0
+        var sumWeekly = 0
+        var sumMonthly = 0
+        $.when.apply($, $('tr[data-package]').map(function () {
+          var $this = $(this)
+          var pkg = $this.data('package')
+          return $.when(
+            getDownloads(pkg, 'last-day').then(function (downloads) {
+              $this.find('.daily').text(downloads)
+              sumDaily += downloads
+            }),
+            getDownloads(pkg, 'last-week').then(function (downloads) {
+              $this.find('.weekly').text(downloads)
+              sumWeekly += downloads
+            }),
+            getDownloads(pkg, 'last-month').then(function (downloads) {
+              $this.find('.monthly').text(downloads)
+              sumMonthly += downloads
+            }),
+          )
+        })).then(function () {
+          $('tfoot .daily').text(sumDaily)
+          $('tfoot .weekly').text(sumWeekly)
+          $('tfoot .monthly').text(sumMonthly)
         })
-      })).then(function () {
-        var sum = { daily: 0, weekly: 0, monthly: 0 }
-        $.each(arguments, function () {
-          sum.daily += this.daily
-          sum.weekly += this.weekly
-          sum.monthly += this.monthly
-        })
-        $('tfoot .daily').text(sum.daily)
-        $('tfoot .weekly').text(sum.weekly)
-        $('tfoot .monthly').text(sum.monthly)
-      })
+        function getDownloads(pkg, period) {
+          return $.get('https://api.npmjs.org/downloads/point/' + period + '/' + pkg)
+            .then(function (response) {
+              return 'downloads' in response ? response.downloads : 0
+            })
+        }
+      } ()

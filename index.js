@@ -15,16 +15,6 @@ app.use(route.get('/~:user', async (ctx, user) => {
     .map((i, el) => $(el).text()).get()
   ctx.body = pug.renderFile('user.pug', { user, pkgs })
 }))
-app.use(route.get('/package/:package', async (ctx, pkg) => {
-  const response = await got(`https://www.npmjs.com/package/${pkg}`)
-  const $ = cheerio.load(response.body)
-  const downloads = {
-    daily: Number($('.daily-downloads').text()),
-    weekly: Number($('.weekly-downloads').text()),
-    monthly: Number($('.monthly-downloads').text())
-  }
-  ctx.body = downloads
-}))
 
 if (require.main === module) {
   app.listen(process.env.PORT)
