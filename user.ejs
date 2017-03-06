@@ -84,7 +84,7 @@
           getDownloads(pkg, 'last-month').then(function (downloads) {
             $this.find('.monthly').text(downloads)
             sumMonthly += downloads
-          }),
+          })
         )
       })).then(function () {
         $('tfoot .daily').text(sumDaily)
