@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node .",
-    "test": "standard",
+    "test": "eslint --ext .js,.ejs .",
     "dev": "nodemon"
   },
   "repository": {
@@ -29,7 +29,11 @@
     "koa-ejs": "^4.0.0"
   },
   "devDependencies": {
-    "nodemon": "^1.11.0",
-    "standard": "^8.6.0"
+    "eslint": "^3.17.0",
+    "eslint-config-standard": "^7.0.0",
+    "eslint-plugin-html": "^2.0.1",
+    "eslint-plugin-promise": "^3.5.0",
+    "eslint-plugin-standard": "^2.1.1",
+    "nodemon": "^1.11.0"
   }
 }

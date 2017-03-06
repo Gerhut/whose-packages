@@ -65,7 +65,7 @@
   </footer>
   <script src="//code.jquery.com/jquery-3.1.1.js"></script>
   <script>
-    void function () {
+    (function ($) {
       var sumDaily = 0
       var sumWeekly = 0
       var sumMonthly = 0
@@ -91,13 +91,13 @@
         $('tfoot .weekly').text(sumWeekly)
         $('tfoot .monthly').text(sumMonthly)
       })
-      function getDownloads(pkg, period) {
+      function getDownloads (pkg, period) {
         return $.get('https://api.npmjs.org/downloads/point/' + period + '/' + pkg)
           .then(function (response) {
             return 'downloads' in response ? response.downloads : 0
           })
       }
-    } ()
+    })(window.jQuery.noConflict())
   </script>
 </body>
 </html>
